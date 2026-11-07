@@ -124,3 +124,9 @@ def export(rid: int, db: Session = Depends(get_db)):
         w.writerow([e.name, pods.get(e.pod_id, "")] + [code.get(grid.get((e.id, d)), "") for d in days])
     return Response(buf.getvalue(), media_type="text/csv",
                     headers={"Content-Disposition": f"attachment; filename=roster_{r.year}_{r.month:02d}.csv"})
+
+@router.api_route("/seed", methods=["GET", "POST"])
+def seed_endpoint(force: bool = False, db: Session = Depends(get_db)):
+    from app.services.seed_data import seed_database
+    return seed_database(db, force=force)
+
