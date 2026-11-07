@@ -13,7 +13,26 @@ import type {
   EntryStatus,
 } from "./types";
 
-export const API_BASE = (import.meta.env.VITE_API_URL ?? "http://localhost:8000") + "/api";
+export function getApiBase(): string {
+  const custom = typeof window !== "undefined" ? localStorage.getItem("backend_url") : null;
+  let raw = (custom || import.meta.env.VITE_API_URL || "http://localhost:8000").trim();
+  raw = raw.replace(/\/+$/, "");
+  if (raw.endsWith("/api")) {
+    return raw;
+  }
+  return `${raw}/api`;
+}
+
+export function setBackendUrl(url: string) {
+  const trimmed = url.trim();
+  if (trimmed) {
+    localStorage.setItem("backend_url", trimmed);
+  } else {
+    localStorage.removeItem("backend_url");
+  }
+}
+
+export const API_BASE = getApiBase();
 
 export function getAdminToken(): string {
   const t = localStorage.getItem("admin_token") || localStorage.getItem("admin");
@@ -28,12 +47,14 @@ export function setAdminToken(token: string) {
 
 export async function request<T>(path: string, method = "GET", body?: unknown): Promise<T> {
   const token = getAdminToken();
+  const base = getApiBase();
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
     "x-admin-token": token,
   };
 
-  const res = await fetch(`${API_BASE}${path}`, {
+  const cleanPath = path.startsWith("/") ? path : `/${path}`;
+  const res = await fetch(`${base}${cleanPath}`, {
     method,
     headers,
     body: body !== undefined ? JSON.stringify(body) : undefined,
@@ -91,5 +112,5 @@ export const api = {
       dates,
       type,
     }),
-  getExportUrl: (rosterId: number) => `${API_BASE}/rosters/${rosterId}/export.csv`,
+  getExportUrl: (rosterId: number) => `${getApiBase()}/rosters/${rosterId}/export.csv`,
 };

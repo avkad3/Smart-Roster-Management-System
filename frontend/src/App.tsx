@@ -11,7 +11,7 @@ import type {
   Roster,
   ValidationReport,
 } from "./types";
-import { api } from "./api";
+import { api, getApiBase, setBackendUrl } from "./api";
 import { Navbar } from "./components/Navbar";
 import { StatCards } from "./components/StatCards";
 import { CompanyView } from "./components/CompanyView";
@@ -88,7 +88,7 @@ export default function App() {
     } catch (err: any) {
       setNotification({
         type: "error",
-        text: `Failed to connect to backend: ${err.message}. Ensure backend is running at http://localhost:8000.`,
+        text: `Failed to connect to backend (${err.message}) at ${getApiBase()}.`,
       });
     }
   }, [yearMonth]);
@@ -210,7 +210,33 @@ export default function App() {
                   : "#38bdf8",
             }}
           >
-            <span>{notification.text}</span>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap" }}>
+              <span>{notification.text}</span>
+              {notification.type === "error" && (
+                <button
+                  onClick={() => {
+                    const current = getApiBase().replace(/\/api$/, "");
+                    const input = window.prompt("Enter your live Backend URL (e.g. https://smart-roster-backend.onrender.com):", current);
+                    if (input !== null) {
+                      setBackendUrl(input);
+                      window.location.reload();
+                    }
+                  }}
+                  className="btn btn-sm"
+                  style={{
+                    padding: "0.25rem 0.65rem",
+                    fontSize: "0.75rem",
+                    background: "rgba(255,255,255,0.12)",
+                    border: "1px solid rgba(255,255,255,0.25)",
+                    color: "#fff",
+                    borderRadius: "var(--radius-sm)",
+                    cursor: "pointer",
+                  }}
+                >
+                  Configure Backend URL ⚙
+                </button>
+              )}
+            </div>
             <button
               onClick={() => setNotification(null)}
               className="btn btn-ghost btn-sm"
