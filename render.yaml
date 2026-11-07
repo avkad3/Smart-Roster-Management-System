@@ -9,5 +9,5 @@ services:
       - key: ADMIN_TOKEN
         value: change-me
       - key: PYTHON_VERSION
-        value: "3.11"
+        value: "3.11.9"
     autoDeploy: true
