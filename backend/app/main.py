@@ -22,6 +22,16 @@ app = FastAPI(title="Smart Roster Management System")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 app.include_router(router, prefix="/api")
 
+@app.get("/")
+def root():
+    return {
+        "service": "Smart Roster Management System API",
+        "docs": "/docs",
+        "health": "/health",
+        "status": "online"
+    }
+
 @app.get("/health")
 def health():
     return {"status": "ok"}
+
