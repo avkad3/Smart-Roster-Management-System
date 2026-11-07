@@ -16,21 +16,22 @@ import type {
 export const API_BASE = (import.meta.env.VITE_API_URL ?? "http://localhost:8000") + "/api";
 
 export function getAdminToken(): string {
-  return localStorage.getItem("admin_token") || "change-me";
+  const t = localStorage.getItem("admin_token") || localStorage.getItem("admin");
+  return t && t.trim() !== "" ? t.trim() : "change-me";
 }
 
 export function setAdminToken(token: string) {
-  localStorage.setItem("admin_token", token);
+  const val = token && token.trim() !== "" ? token.trim() : "change-me";
+  localStorage.setItem("admin_token", val);
+  localStorage.setItem("admin", val);
 }
 
 export async function request<T>(path: string, method = "GET", body?: unknown): Promise<T> {
   const token = getAdminToken();
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
+    "x-admin-token": token,
   };
-  if (token) {
-    headers["x-admin-token"] = token;
-  }
 
   const res = await fetch(`${API_BASE}${path}`, {
     method,

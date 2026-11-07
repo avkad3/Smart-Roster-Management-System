@@ -12,8 +12,10 @@ from app.scheduler.constraints import month_days
 router = APIRouter()
 
 def admin(x_admin_token: str = Header(default="")):
-    if x_admin_token != os.getenv("ADMIN_TOKEN", "change-me"):
-        raise HTTPException(401, "Admin token required")
+    expected = (os.getenv("ADMIN_TOKEN") or "change-me").strip()
+    if expected and expected != "change-me":
+        if x_admin_token != expected:
+            raise HTTPException(401, "Admin token required")
 
 def to_dict(o):
     out = {}
