@@ -1,5 +1,4 @@
 # Smart Roster Management System
----
 
 ## 🌟 Key Highlights & Standout Frontend Architecture
 
