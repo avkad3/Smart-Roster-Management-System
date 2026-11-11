@@ -1,8 +1,4 @@
 # Smart Roster Management System
-
-> **Hiring Assignment: Tech Internship Assessment Test**  
-> An intelligent operational roster planning, constraint solver validation, and multi-brand coverage management system designed for high-growth D2C customer operations teams.
-
 ---
 
 ## 🌟 Key Highlights & Standout Frontend Architecture
